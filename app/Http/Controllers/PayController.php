@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Pay;
 use Illuminate\Http\Request;
+//use App\PayLib;
 include ('PayLib.php');
 
 class PayController extends Controller
@@ -62,38 +63,44 @@ class PayController extends Controller
         $order_id = date('YmdHis', time());
         $user_id=uniqid();
         $parameter = array(
-            "oid_partner" => "201709141355751809",
+            /*"oid_partner" => "201709141355751809",
             "time_order" => $order_id,
-            "no_order"	=>"201610270213999",
-            "notify_url"	=>"http://www.baidu.com/",
+            "no_order"	=>"2016102702",
+            ' notify_url'	=>"http://www.baidu.com/",
             "pay_type"	=> "48",
             "money_order"	=>100,
             "name_goods"	=> "sssss",
             "user_id"	=> $user_id,
-            "sign_type" => "MD5",
-//
-//            'money_order' => "100",
-//            'name_goods' => 'sssss',
-//            'no_order' => "201610270213999", 'notify_url' => "http://www.baidu.com/",
-//            'oid_partner' => "201709141355751809",
-//            'pay_type' => '48',
-//            'sign_type' => 'MD5',
-//            'time_order' => $order_id,
-//            'user_id' => $user_id,
-        );
+            "sign_type" => "MD5",*/
 
+            'money_order' => "100",
+            'name_goods' => 'sssss',
+            'no_order' => "2016102705",
+            'notify_url' => "http://www.baidu.com/",
+            'oid_partner' => "201709141355751809",
+            'pay_type' => '48',
+            'sign_type' => 'MD5',
+            'time_order' => $order_id,
+            'user_id' => $user_id,
+        );
+        //$a=http_build_query($parameter);
+        //$signStr=addslashes($a);
+        //var_dump($a);die;
         $parameter = paraFilter($parameter);
+        //var_dump($parameter);die;
         $parameter = argSort($parameter);
+        //var_dump($parameter);die;
 //        $signStr = "";
         $signStr = createLinkstring($parameter);
+        $signStr=addslashes($signStr);
         $merchant_md5_key='hs12ll29g';
-        var_dump($signStr);die;
+        //var_dump($signStr);die;
         $code = md5Sign($signStr, $merchant_md5_key);
 
         $para = [
             'money_order' => 100,
             'name_goods' => 'sssss',
-            'no_order' => "201610270213999",
+            'no_order' => "2016102705",
             'notify_url' => "http://www.baidu.com/",
             'oid_partner' => "201709141355751809",
             'pay_type' => '48',
@@ -103,6 +110,9 @@ class PayController extends Controller
             'sign' =>$code,
         ];
         $code1=http_build_query($para);
-        return redirect("http://yiapi.lianlianspc.com/gateway/yigateway?{$code1}",302);
+         $msg=redirect("http://yiapi.lianlianspc.com/gateway/yigateway?{$code1}",302);
+         //$msg=json_decode($msg,true);
+         //var_dump($msg);die;//dimension_url
+         return view('test.test',compact('msg'));
     }
 }
