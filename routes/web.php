@@ -22,3 +22,13 @@ Route::post('/payment','PaymentController@index');
 Route::post('/pay','PayController@enter')->name('inters');
 
 //Route::post('/pay','PayController@create')->name('store');
+//Route::post('/pay','PayController@notify')->name('notify');
+
+Route::any('/result/{id}',function ($id){
+       $order=DB::table('pays')->value('result_pay');
+       //var_dump($order);
+    if($order == 'SUCCESS'){
+
+    }
+});
+
