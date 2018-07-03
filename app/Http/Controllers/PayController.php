@@ -129,40 +129,65 @@ class PayController extends Controller
                 'time_order' => $order_id,
                 'user_id' => $user_id,
             );
+
             $parameter = paraFilter($parameter);
             $parameter = argSort($parameter);
             $signStr = createLinkstring($parameter);
             $signStr = addslashes($signStr);
             //var_dump($signStr);die;
             $merchant_md5_key = 'hs12ll29g';
-            $signStr.=$merchant_md5_key;
-            var_dump($signStr);die;
+            //$signStr.=$merchant_md5_key;
+            //var_dump($signStr);die;
             $code = md5Sign($signStr, $merchant_md5_key);
                //var_dump($code);die;
             $parameter['sign'] = $code;
-
-            $ch = curl_init();
-            $pay_gateway_new = 'http://yiapi.lianlianspc.com/gateway/yigateway';
-            curl_setopt($ch,CURLOPT_URL,$pay_gateway_new);
-            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-            curl_setopt($ch, CURLOPT_POST, true);
-            curl_setopt($ch, CURLOPT_HEADER, false);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($parameter));
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-
-            $response = curl_exec($ch);
-            var_dump($response);die;
-            curl_close($ch);
+            $pay_gateway_new = 'http://yiapi.lianlianspc.com/gateway/bankgateway';
             //var_dump($parameter);die;
-          //return view('pay.add',compact('parameter','pay_gateway_new'));
+          return view('pay.add',compact('parameter','pay_gateway_new'));
 
-    }else{
+    }else if($request->pay_type == 20){
+            $parameter = array(
+                'totalAmount' => "100",
+                'outTradeNo' => $no_order,
+                'orgId'=>"1000000000000026",
+                'txnType'=>"T30218",
+                'orderTime'=>$order_id,
+            );
+            //var_dump($parameter);die;
+     return view('pay.create',compact('parameter'));
+        }else if($request->pay_type == 21){
+            $parameter = array(
+                'money_order' => "100",
+                'name_goods' => 'sssss',
+                'no_order' => $no_order,
+                'notify_url' => "http://www.jhwl668.com/api/notify/zfwypay.php",
+                'return_url' => "http://www.jhwl668.com/api/notify/zfwypay.php",
+                'oid_partner' => "201709141355751809",
+                'pay_type' => '21',
+                'sign_type' => 'MD5',
+                'time_order' => $order_id,
+                'user_id' => $user_id,
+            );
 
+            $parameter = paraFilter($parameter);
+            $parameter = argSort($parameter);
+            $signStr = createLinkstring($parameter);
+            $signStr = addslashes($signStr);
+            //var_dump($signStr);die;
+            $merchant_md5_key = 'hs12ll29g';
+            $code = md5Sign($signStr, $merchant_md5_key);
+            $parameter['sign'] = $code;
+            //$parameter['payway_type_id'] = 6;
+
+            $pay_gateway_new = 'http://yiapi.lianlianspc.com/gateway/bankgateway';
+             //header('location:http://yiapi.lianlianspc.com/gateway/bankgateway');
+            //var_dump($parameter);die;
+            return view('pay.quirt',compact('parameter','pay_gateway_new'));
         }
 
     }
-    //异步通知
+
+    //异步通知//传过来的验签跟自己生成的验签对比看咋样
     public function notify(){
         $str = file_get_contents("php://input");
         //var_dump($str);die;
@@ -183,11 +208,8 @@ class PayController extends Controller
             $signStr = createLinkstring($parameter);
             $merchant_md5_key = 'hs12ll29g';
             $sign_base = md5Sign($signStr, $merchant_md5_key);
-
             if($sign_base == $sign){
-
                 die('{"ret_code":"0000","ret_msg":"交易成功"}'); //请不要修改或删除
-
             }else{
                 die('{"ret_code":"9999","ret_msg":"验签失败"}');
             }
