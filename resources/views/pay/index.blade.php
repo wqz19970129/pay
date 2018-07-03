@@ -30,7 +30,10 @@
                             <input type="radio" name="pay_type" id="inlineRadio1" value="11"> 网银支付
                         </label>
                         <label class="radio-inline">
-                            <input type="radio" name="pay_type" id="inlineRadio1" value=""> 代付
+                            <input type="radio" name="pay_type" id="inlineRadio1" value="20"> 代付
+                        </label>
+                        <label class="radio-inline">
+                            <input type="radio" name="pay_type" id="inlineRadio1" value="21"> 快捷支付
                         </label>
                     </div>
 
